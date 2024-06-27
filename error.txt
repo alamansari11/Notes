@@ -1,0 +1,2 @@
+maxElement_brute_force(arr, arr_size) = 7
+max_element_by_lib = 7
