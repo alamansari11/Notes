@@ -92,31 +92,58 @@ void recurPermute(int index,vector<vector<int>> &ans, vector<int> &arr)
 
     }
 }
-vector<vector<int>> nextPermutationBrute(vector<int> v) {
+vector<int> nextPermutationBrute(vector<int> v) {
     vector<vector<int>> ans;
     recurPermute(0,ans,v);
-    return ans;
-}
-vector<int> rearragePositiveNegativeOptimal(vector<int> v) {
-
-    //size of the given array:
-    int n = v.size();
-    if(n==1) return v;
-    vector<int> result(n);
-    int positive =0,negative =1;
-    for(int i=0;i<n;i++){
-        if(v[i]<0){
-            result[negative] =v[i];
-            negative+=2;
+    debug(ans);
+    bool isfound = false;
+    vector<int> temp;
+    for(auto i: ans){
+        if(isfound)
+        {
+            temp = i;
+            return temp;
         }
-        else{
-            result[positive] =v[i];
-            positive+=2;
+        if(i==v){
+            isfound = true;
         }
     }
-    return result;
+    return ans[0];
 }
+vector<int> nextPermuteStl(vector<int> v) {
 
+    next_permutation(v.begin(),v.end());
+    return v;
+}
+vector<int> nextPermuteOptimal(vector<int> v) {
+    int size = v.size();
+    int index = -1;
+    //finding breakpoint
+    for(int i=size-2;i>=0;i--)
+    {
+        if(v[i]<v[i+1])
+        {
+            index = i;
+            break;
+        }
+    }
+    //no breakpoint means already the last permutation so just reverse to get the first permutation and return 
+    if(index==-1)
+    {
+        reverse(v.begin(),v.end());
+        return v;
+    }
+    // find the next greater element than the breakpoint and swap it
+    for(int i=size-1;i>=index;i--){
+        if(v[i]>v[index])
+        {
+            swap(v[i],v[index]);
+        }
+    }
+    //now just reverse the remaining elements as this will result in just next permutation
+    reverse(v.begin()+index+1,v.end());
+    return v;
+}
 void solve() {
     // vector<int> v = {1,2,3,4,5};
     vector<int> v = {1,2,3};
@@ -125,10 +152,10 @@ void solve() {
 
     auto brute = nextPermutationBrute(v);
     debug(brute);
-    // auto better = maxSubArraySumBetter(v);
-    // debug(better);
-    // auto optimal = rearragePositiveNegativeBrute(v);
-    // debug(optimal);
+    auto stl = nextPermuteStl(v);
+    debug(stl);
+    auto optimal = nextPermuteOptimal(v);
+    debug(optimal);
 
     // int arr2[] = {1,2,3,4,5};
     // right_rotate_brute(arr2,end(arr2)-begin(arr2), k);
