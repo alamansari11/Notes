@@ -1,0 +1,1 @@
+SSO stands for Single Sign-On, a method/technology that allows users to access multiple applications with a single set of login credentials![alt text](image.png)
