@@ -87,67 +87,6 @@ bool linearSearch(int element, vector<int> arr)
     return false;
 }
 
-int longestConsecutiveBrute(vector<int> v) {
-    
-    cout<<"entered"<<endl;
-    int maxLength = 1;
-    for(int i=0;i<v.size();i++)
-    {
-        int currLength = 1;
-        int currElement = v[i];
-        while(linearSearch(currElement+1, v)){
-            currLength++;
-            currElement++;
-        }
-        maxLength = max(maxLength,currLength);
-    }
-    return maxLength;
-    
-}
-
-int longestConsecutiveBetter(vector<int> v) {
-    
-    cout<<"entered"<<endl;
-    sort(v.begin(),v.end());
-    int maxLength = 1;
-    int currElement = v[0];
-    int currLength = 1;
-    for(int i=1;i<v.size();i++)
-    {
-        if(v[i]-1==currElement){
-            currLength++;
-            currElement=v[i];
-        }
-        else{
-            currLength=1;
-        }
-        maxLength = max(maxLength,currLength);
-    }
-    return maxLength;
-    
-}
-int longestConsecutiveOptimal(vector<int> v) {
-    
-    cout<<"entered"<<endl;
-    unordered_set<int> s(v.begin(),v.end());
-    int maxLength = 1;
-    for(int i=0;i<v.size();i++)
-    {
-        //check if it is a start of sequence means num-1 should not exist
-        if(s.find(v[i]-1)==s.end()){
-            int currLength = 1;
-            int currElement = v[i];
-            while(s.find(currElement+1)!=s.end()){
-                currLength++;
-                currElement++;
-            }
-            maxLength = max(maxLength,currLength);
-        }
-        //else move to next element
-    }
-    return maxLength;
-    
-}
 void setZeroes(vector<vector<int>>& matrix) {
         int rowSize = matrix.size();
         int colSize = matrix[0].size();
@@ -185,8 +124,8 @@ void solve() {
                               {1, 3, 1, 5}};
 
 
-    auto bruteAndBetter = setZeroes(matrix);
-    debug(brute);
+    setZeroes(matrix);
+    debug(matrix);
     // auto better = longestConsecutiveBetter(v);
     // debug(better);
     // auto optimal = longestConsecutiveOptimal(v);
