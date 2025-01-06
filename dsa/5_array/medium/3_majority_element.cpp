@@ -120,6 +120,18 @@ int majorityElementHashMapBetter(vector<int> v) {
 
     return -1;
 }
+
+// 1. Finding a Candidate:
+// Maintain a candidate and a count.
+// Traverse the array:
+// If the count is 0, set the current element as the candidate and set count = 1.
+// If the current element equals the candidate, increment the count.
+// If the current element does not equal the candidate, decrement the count.
+// At the end of this step, the candidate contains a potential majority element.
+
+// 2. Verification:
+// Traverse the array again and count the occurrences of the candidate.
+// If the count of the candidate is greater than n / 2, it is the majority element. Otherwise, there is no majority element.
 int majorityElementMooreVotingOptimal(vector<int>& nums) {
         
         int cnt = 0;
