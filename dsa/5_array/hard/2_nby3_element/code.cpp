@@ -1,123 +1,106 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// tc: O(n^2) sc: O(1)
-vector<int> majorityElementBrute(vector<int>& v) {
-    vector<int> result;
-    for (int i = 0; i < v.size(); i++) {
-        if (result.size() == 0 || result[0] != v[i]) {
-            int cnt = 0;
-            for (int j = 0; j < v.size(); j++) {
-                if (v[i] == v[j]) {
-                    cnt++;
+// Time Complexity: O(N3 * log(no. of unique triplets)), where N = size of the array.
+vector<vector<int>> threeSumBrute(vector<int>& nums) {
+    set<vector<int>> s;
+    int element = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        for (int j = i + 1; j < nums.size(); j++) {
+            for (int k = j + 1; k < nums.size(); k++) {
+                if (nums[i] + nums[j] + nums[k] == element) {
+                    vector<int> temp = {nums[i], nums[j], nums[k]};
+                    sort(temp.begin(), temp.end());
+                    s.insert(temp);
                 }
             }
-            if (cnt > (v.size() / 3)) {
-                result.push_back(v[i]);
+        }
+    }
+    return vector<vector<int>>(s.begin(), s.end());
+}
+
+// Time Complexity: O(N2 * log(no. of unique triplets))
+vector<vector<int>> threeSumBetterSet(vector<int>& nums) {
+    set<vector<int>> s;
+    int element = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        set<int> hashSet;
+        for (int j = i + 1; j < nums.size(); j++) {
+            int target = element - (nums[i] + nums[j]);
+            if (hashSet.find(target) != hashSet.end()) {
+                vector<int> temp = {nums[i], nums[j], target};
+                sort(temp.begin(), temp.end());
+                s.insert(temp);
             }
-            if (result.size() == 2)
-                break;
+            hashSet.insert(nums[j]);
+        }
+    }
+    return vector<vector<int>>(s.begin(), s.end());
+}
+
+// Time Complexity: O(NlogN)+O(N2)
+vector<vector<int>> threeSum(vector<int>& nums) {
+    vector<vector<int>> result;
+    sort(nums.begin(), nums.end());
+    int element = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        if (i != 0 && nums[i] == nums[i - 1]) continue; // Skip duplicates for i
+        int j = i + 1, k = nums.size() - 1;
+        while (j < k) {
+            int sum = nums[i] + nums[j] + nums[k];
+            if (sum < element) {
+                j++;
+            } else if (sum > element) {
+                k--;
+            } else {
+                result.push_back({nums[i], nums[j], nums[k]});
+                j++; k--;
+                while (j < k && nums[j] == nums[j - 1]) j++; // Skip duplicates for j
+                while (k > j && nums[k] == nums[k + 1]) k--; // Skip duplicates for k
+            }
         }
     }
     return result;
 }
 
-// tc: O(n) sc: O(n)
-vector<int> majorityElementBetter(vector<int>& v) {
-    unordered_map<int, int> um;
-    for (auto i : v) {
-        um[i]++;
-    }
-    vector<int> result;
-    for (auto i : um) {
-        if (i.second > (v.size() / 3)) {
-            result.push_back(i.first);
-            if (result.size() == 2)
-                break;
-        }
-    }
-    return result;
-}
-
-// tc : O(n)
-vector<int> majorityElementOptimalMooreVotingExtended(vector<int>& v) {
-    int cnt1 = 0, cnt2 = 0, elem1 = INT_MIN, elem2 = INT_MIN;
-    for (int i = 0; i < v.size(); i++) {
-        if (cnt1 == 0 && v[i] != elem2) {
-            elem1 = v[i];
-            cnt1++;
-        } else if (cnt2 == 0 && v[i] != elem1) {
-            elem2 = v[i];
-            cnt2++;
-        } else if (v[i] == elem1)
-            cnt1++;
-        else if (v[i] == elem2)
-            cnt2++;
-        else {
-            cnt1--;
-            cnt2--;
-        }
-    }
-    cnt1 = 0;
-    cnt2 = 0;
-    vector<int> result;
-    for (int i = 0; i < v.size(); i++) {
-        if (v[i] == elem1)
-            cnt1++;
-        if (v[i] == elem2)
-            cnt2++;
-    }
-    if (cnt1 > v.size() / 3)
-        result.push_back(elem1);
-    if (cnt2 > v.size() / 3)
-        result.push_back(elem2);
-    return result;
-}
-
-void testFunctions() {
-    vector<vector<int>> testCases = {
-        {3, 2, 3},              // Simple case, one majority element
-        {1},                    // Single element
-        {1, 2, 3},              // No majority elements
-        {1, 1, 1, 2, 3, 4, 5},  // One majority element
-        {1, 2, 2, 3, 3, 3, 3},  // One majority element with multiple occurrences
-        {1, 1, 1, 2, 2, 2, 3},  // Two majority elements
-        {},                     // Empty array
-        {1, 1, 1, 1, 1},        // All elements are the same
-    };
-
-    for (auto& testCase : testCases) {
-        cout << "Input: [";
-        for (size_t i = 0; i < testCase.size(); i++) {
-            cout << testCase[i] << (i + 1 < testCase.size() ? ", " : "");
+void printResults(const vector<vector<int>>& results) {
+    for (const auto& triplet : results) {
+        cout << "[";
+        for (int i = 0; i < triplet.size(); i++) {
+            cout << triplet[i] << (i < triplet.size() - 1 ? ", " : "");
         }
         cout << "]\n";
-
-        auto bruteResult = majorityElementBrute(testCase);
-        auto betterResult = majorityElementBetter(testCase);
-        auto optimalResult = majorityElementOptimalMooreVotingExtended(testCase);
-
-        cout << "Brute Force Output: [";
-        for (size_t i = 0; i < bruteResult.size(); i++) {
-            cout << bruteResult[i] << (i + 1 < bruteResult.size() ? ", " : "");
-        }
-        cout << "]\n";
-
-        cout << "Better Output: [";
-        for (size_t i = 0; i < betterResult.size(); i++) {
-            cout << betterResult[i] << (i + 1 < betterResult.size() ? ", " : "");
-        }
-        cout << "]\n";
-
-        cout << "Optimal Output: [";
-        for (size_t i = 0; i < optimalResult.size(); i++) {
-            cout << optimalResult[i] << (i + 1 < optimalResult.size() ? ", " : "");
-        }
-        cout << "]\n\n";
     }
+    if (results.empty()) cout << "No triplets found\n";
+    cout << "-------------------\n";
 }
 
 int main() {
-    testFunctions();
+    // Test cases
+    vector<vector<int>> testCases = {
+        {},                          // Edge case: empty array
+        {0, 0, 0},                   // Edge case: single triplet with all zeroes
+        {1, 2, 3, 4, 5},             // No valid triplets
+        {-1, 0, 1, 2, -1, -4},       // Mixed positive and negative numbers with duplicates
+        {0, -1, 2, -3, 1},           // Normal case with multiple triplets
+        {-2, 0, 1, 1, 2},            // Case with duplicates that need to be skipped
+        {0, 0, 0, 0, 0},             // All elements are zero
+        {-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 4}, // Large case with multiple duplicates
+    };
+
+    for (int i = 0; i < testCases.size(); i++) {
+        cout << "Test case " << i + 1 << ":\n";
+        vector<int> nums = testCases[i];
+
+        cout << "Brute Force Results:\n";
+        printResults(threeSumBrute(nums));
+
+        cout << "Better (Set-based) Results:\n";
+        printResults(threeSumBetterSet(nums));
+
+        cout << "Optimized Results:\n";
+        printResults(threeSum(nums));
+    }
+
     return 0;
 }
