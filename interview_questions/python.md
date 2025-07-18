@@ -22,3 +22,5 @@ second highest salary
 concatenation
 normalization
 joins
+different type of constrainst
+why unique key cannot be primary key
